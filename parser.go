@@ -145,6 +145,7 @@ func getPacketSourceFromMatches(matches []PacketSource) PacketSource {
 		firstMatch := matches[0]
 		for _, match := range matches {
 			if match != firstMatch {
+				log.Println("warning: skipping packet due to conflicting filters")
 				return PACKET_UNKNOWN
 			}
 		}
