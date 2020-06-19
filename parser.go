@@ -22,6 +22,7 @@ const (
 
 var dataPieces = make(map[uint32][]byte)
 var lastPacketSource = PacketSource(PACKET_UNKNOWN)
+var lastPacketId = 0
 
 func parsePcap(file string) error {
 	handle, err := pcap.OpenOffline(file)
@@ -61,13 +62,14 @@ func parseTcpLayer(layer *layers.TCP, id int, srcIP net.IP, dstIP net.IP) error 
 	}
 
 	if packetSource != lastPacketSource && len(dataPieces) > 0 {
-		if err := flushDataPieces(id, lastPacketSource); err != nil {
+		if err := flushDataPieces(lastPacketId, lastPacketSource); err != nil {
 			return err
 		}
 	}
 
 	dataPieces[layer.Seq] = layer.Payload
 	lastPacketSource = packetSource
+	lastPacketId = id
 	return nil
 }
 
