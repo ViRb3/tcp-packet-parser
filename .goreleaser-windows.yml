@@ -1,0 +1,16 @@
+before:
+  hooks:
+    - go mod download
+builds:
+  - #
+    ldflags:
+      - -s -w
+    goos:
+      - windows
+    goarch:
+      - 386
+      - amd64
+archives:
+  - format: binary
+checksum:
+  name_template: "checksums.txt"

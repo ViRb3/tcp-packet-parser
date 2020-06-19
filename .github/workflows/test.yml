@@ -1,0 +1,53 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.API_GITHUB_TOKEN }}
+
+      - name: Test
+        run: |
+          sudo apt update -qq
+          sudo apt install -y -qq libpcap-dev
+          go test -race -v ./... -cover
+
+  test-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.API_GITHUB_TOKEN }}
+
+      - name: Test
+        run: |
+          Import-Module BitsTransfer
+          Start-BitsTransfer -Source https://www.dropbox.com/s/1oe616ya866vc7g/wpcap.dll?dl=1 -Destination $env:WINDIR\system32\wpcap.dll
+          go test -race -v ./... -cover
+
+  version:
+    needs: [test-linux, test-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.API_GITHUB_TOKEN }}
+
+      - name: Version
+        uses: cycjimmy/semantic-release-action@v2.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
