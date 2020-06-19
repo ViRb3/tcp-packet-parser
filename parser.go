@@ -52,6 +52,12 @@ func parsePcap(file string) error {
 		}
 	}
 
+	if len(dataPieces) > 0 {
+		if err := flushDataPieces(lastPacketId, lastPacketSource); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
