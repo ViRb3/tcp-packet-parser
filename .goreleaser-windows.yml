@@ -13,4 +13,4 @@ builds:
 archives:
   - format: binary
 checksum:
-  name_template: "checksums.txt"
+  name_template: "{{ .ProjectName }}_{{ .Version }}_windows_checksums.txt"
